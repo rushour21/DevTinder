@@ -1,0 +1,10 @@
+git addNode.js
+node_modules/
+.env
+.DS_Store
+dist/
+build/
+*.log
+coverage/
+.vscode/
+*.zip
