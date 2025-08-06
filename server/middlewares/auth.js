@@ -7,8 +7,9 @@ const auth = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({ message: 'Authentication required.' });
         }
-        const decoded = Jwt.verify(token, process.env.JWT_SECRET);
-        req.user = await User.findById(decoded);
+        const decoded = Jwt.verify(token, process.env.VITE_JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        req.user = user;
         next();
     } catch (error) {
         res.status(401).json({ message: 'Invalid token.' });
