@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl:{
         type: String,
-        default: 'https://example.com/default-profile.png'
+        default: 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp'
     }
 }, { timestamps: true })
 
