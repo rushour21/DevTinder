@@ -64,4 +64,47 @@ router.get('/user/connections',
     }
 )
 
+router.get('/feed', auth, async (req,res)=>{
+    try {
+        const loggedUser = req.user;
+        console.log(loggedUser); 
+
+        const page= parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        limit = limit>50 ? 50 : limit;
+        const skip = (page-1)*limit;
+
+        const connectionRequests = await Request.find({
+            $or:[
+                {fromUserId: loggedUser._id.toString()},
+                {toUserId: loggedUser._id.toString()}
+            ]
+        }).select("fromUserId toUserId")
+
+        console.log(connectionRequests);
+
+        const hideuser = new Set();
+        connectionRequests.forEach((req)=>{
+            hideuser.add(req.fromUserId.toString());
+            hideuser.add(req.toUserId.toString());
+        })
+
+        const users = await User.find({
+            $and:[
+                {_id:{$nin: Array.from(hideuser)}},
+                {_id: {$ne: loggedUser._id}}
+            ]
+        })
+        .select(SAFE_DATA)
+        .skip(skip)
+        .limit(limit)
+
+        console.log(users);
+
+        res.send(users);
+    } catch (error) {
+        res.status(400).send({message: error}); 
+    }
+})
+
 module.exports = router;
