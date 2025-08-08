@@ -21,7 +21,9 @@ const port = process.env.PORT || 3000;
 
 app.use('/', authRoutes);
 app.use('/', requestRoutes);
-app.use('/', userRoutes)
+app.use('/', userRoutes);
+app.use('/', profileRoutes)
+
 
 connectDB().then(() => {
   app.listen(port, () => {

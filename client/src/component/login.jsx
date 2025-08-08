@@ -8,9 +8,9 @@ import {useNavigate} from 'react-router-dom';
 
 export default function Login() {
     const show = false;
-    const [email, setEmail] = useState("akshay@example.com");
+    const [email, setEmail] = useState("virat@example.com");
     const [password, setPassword] = useState("Rushabh@1234");
-    const [data , setData] = useState({});
+    const [error , setError] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
@@ -24,11 +24,11 @@ export default function Login() {
             });
 
             if (res.data) {
-                setData(res.data.user); // ✅ correct way to access user
-                dispatch(addUser(res.data.user))
+                dispatch(addUser(res?.data?.user))
                 navigate('/')
             }
         } catch (err) {
+            setError(err?.response?.data?.message)
             console.error("Login failed:", err);
         }
     };
@@ -91,11 +91,10 @@ export default function Login() {
                         onChange={(e)=>setPassword(e.target.value)}
                     />
                 </label>
-                {show && <p className="validator-hint hidden">
-                    Must be more than 6 characters, including
-                    <br />At least one number <br />At least one lowercase letter <br />At least one uppercase letter
-                </p>}
             </div>
+            <p className="text-red-500">
+                    {error}
+                </p>
             <div className="card-actions justify-center mt-2">
                 <button className="btn btn-primary bg-neutral-700 " onClick={handleSubmit}>Login</button>
             </div>
