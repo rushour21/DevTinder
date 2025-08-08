@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import UserCard from './userCard'
 
 export default function editProfile({user}) {
     const [firstName , setFirstName] = useState(user.firstName)
@@ -9,7 +10,7 @@ export default function editProfile({user}) {
     const [about , setAbout] = useState(user.about)
 
   return (
-     <div className='flex justify-center '>
+     <div className='flex gap-6 mr-auto ml-auto'>
         <div className="card bg-base-100 w-96 shadow-lg">
             <div className="card-body">
                 <h2 className="card-title">Login</h2>
@@ -44,6 +45,7 @@ export default function editProfile({user}) {
                 </div>
             </div>
         </div>
+        <UserCard user={{firstName, lastName, photoUrl, age, gender, about} }/>
     </div>
   )
 }

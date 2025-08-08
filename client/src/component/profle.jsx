@@ -7,9 +7,8 @@ export default function Profle() {
   const user = useSelector((store) => store.user)
   console.log(user);
   return (
-    <div className='flex gap-8 p-4 justify-center flex-wrap'>
+    <div className='flex gap-8 p-4'>
       {user && <EditProfile user={user}/>} 
-      {user && <UserCard user={user}/>}
     </div>
   )
 }

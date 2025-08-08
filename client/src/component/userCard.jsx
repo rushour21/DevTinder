@@ -10,10 +10,10 @@ export default function UserCard({user}) {
             alt="uuig"
             className="w-full h-full" />
         </figure>
-        <div className="card-body absolute bottom-0 text-gray-300 w-full">
+        <div className="card-body absolute bottom-0 text-neutral-50 w-full">
             <h2 className="card-title">{firstName + " " + lastName}</h2>
             <p>{`${age} ${gender.charAt(0).toUpperCase() + gender.slice(1)}`}</p>
-            <p>{about}</p>
+            <p className=' whitespace-normal break-words w-full'>{about}</p>
             <div className="card-actions justify-end w-full">
                 <button className="btn btn-primary">Ignore</button>
                 <button className="btn btn-primary">Interested</button>
