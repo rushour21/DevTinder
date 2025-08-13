@@ -14,7 +14,7 @@ router.get('/profile/view', auth, async (req, res) => {
         })
     } catch (error) {
         res.status(404).json({
-            message: error.message
+            message: error.message 
         })
     }
 })

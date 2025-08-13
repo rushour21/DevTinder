@@ -31,11 +31,11 @@ export default function Connections() {
   return (
     <div className='w-full h-full flex flex-col items-center gap-2 overflow-auto '>
         <h1 className='text-3xl font-bold text-neutral-500 mb-2'>Connections</h1>
-        <ul className="list bg-base-100 rounded-box shadow-md w-3xl">
+        <ul className="list rounded-box shadow-md w-3xl">
             {connections.map((connection)=>{
             const {firstName, lastName, photoUrl, age, gender, about} = connection
             return(
-                <li className="list-row flex items-center">
+                <li className="list-row flex items-center bg-base-100 mt-2">
                 <div>
                     <img className="size-10 rounded-box" 
                     src={photoUrl? photoUrl: "https://img.daisyui.com/images/profile/demo/1@94.webp"}
