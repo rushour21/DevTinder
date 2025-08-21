@@ -13,8 +13,8 @@ export default function Feed() {
         if(feed) return;
         try {
             const res =  await axios.get(`${import.meta.env.VITE_API_URL}/feed`,{withCredentials:true})
-            console.log(res);
             dispatch(addFeed(res?.data))
+            //console.log(res.data)
         } catch (error) {
             console.log(error)
         }
@@ -23,10 +23,11 @@ export default function Feed() {
     useEffect(()=>{
         getFeed();
     }, [])
+    console.log(feed)
 
   return (
     <div className='flex flex-1 justify-center items-center mt-auto mb-auto'>
-        {feed && <UserCard user={feed[0]}/>}
+        {feed && feed.length > 0 ? <UserCard user={feed[0]}/> : <p className='text-3xl'>No User Found</p>}
     </div>
   )
 }

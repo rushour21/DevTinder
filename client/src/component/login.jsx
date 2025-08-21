@@ -7,14 +7,16 @@ import {useNavigate} from 'react-router-dom';
 
 
 export default function Login() {
-    const show = false;
+    const [islogin, setIslogin] = useState(true);
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("virat@example.com");
     const [password, setPassword] = useState("Rushabh@1234");
     const [error , setError] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
-    const handleSubmit = async () => {
+    const handleLogin = async () => {
         try {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
                 email,
@@ -33,6 +35,27 @@ export default function Login() {
         }
     };
 
+    const handleSignup = async () => {
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/signup`, {
+                firstName,
+                lastName,
+                email,
+                password
+            }, {
+                withCredentials: true
+            });
+
+            if (res.data) {
+                dispatch(addUser(res?.data?.user))
+                navigate('/profile')
+            }
+        } catch (err) {
+            setError(err?.response?.data?.message)
+            console.error("SignUp failed:", err);
+        }
+    };
+
     
 
     
@@ -40,8 +63,54 @@ export default function Login() {
     <div className='flex justify-center my-15 '>
         <div className="card bg-base-100 w-96 shadow-lg">
         <div className="card-body">
-            <h2 className="card-title">Login</h2>
+            <h2 className="card-title">{islogin ? "Login" : "SignUp"}</h2>
             <div className='flex flex-col gap-6'>
+                {!islogin && 
+                <><label className="input validator">
+                    <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <g
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        strokeWidth="2.5"
+                        fill="none"
+                        stroke="currentColor"
+                        >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                        </g>
+                    </svg>
+                    <input
+                        type="text"
+                        required
+                        placeholder="Firstname"
+                        value={firstName}
+                        onChange={(e)=> setFirstName(e.target.value)}
+                        title="Only letters"
+                    />
+                </label>
+                <label className="input validator">
+                    <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <g
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        strokeWidth="2.5"
+                        fill="none"
+                        stroke="currentColor"
+                        >
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                        </g>
+                    </svg>
+                    <input
+                        type="text"
+                        required
+                        placeholder="Lastname"
+                        value={lastName}
+                        onChange={(e)=> setLastName(e.target.value)}
+                        title="Only letters"
+                    />
+                </label></>
+                }
                 <label className="input validator">
                     <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g
@@ -63,7 +132,6 @@ export default function Login() {
                         onChange={(e)=>setEmail(e.target.value)} 
                     />
                 </label>
-                {show && <div className="validator-hint hidden">Enter valid email address</div>}
 
                 <label className="input validator">
                     <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -95,8 +163,11 @@ export default function Login() {
             <p className="text-red-500">
                     {error}
                 </p>
-            <div className="card-actions justify-center mt-2">
-                <button className="btn btn-primary bg-neutral-700 " onClick={handleSubmit}>Login</button>
+            <div className="card-actions flex flex-col justify-center items-center mt-2">
+                <button className="btn btn-primary bg-neutral-700 " onClick={islogin? handleLogin : handleSignup}>{islogin ? "Login" : "SignUp"}</button>
+                {islogin ? 
+                    <p>Not  Registered? <span className='cursor-pointer font-bold' onClick={()=> setIslogin(false)}>SIGN UP</span></p> 
+                    : <p>Already Registered? <span className='cursor-pointer font-bold' onClick={()=> setIslogin(true)}>LOG IN</span></p>}
             </div>
         </div>
     </div>

@@ -20,7 +20,6 @@ export default function body() {
         {withCredentials:true}
       )
       dispatch(addUser(res.data.user))
-      console.log(res.data.user)
     } catch (error) {
        if (error.response && error.response.status === 401) {
       navigate('/login');

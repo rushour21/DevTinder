@@ -10,7 +10,7 @@ router.post('/signup', async (req, res)=>{
     try {
         isvalidSignUp(req);
         console.log(req.body);
-        const {firstName, lastName, email, password, age, gender } = req.body;
+        const {firstName, lastName, email, password } = req.body;
         const existingUser = await User.findOne({ email: email});
         if(existingUser) throw new Error("User already exists.");
 
@@ -20,8 +20,6 @@ router.post('/signup', async (req, res)=>{
             lastName,
             email,
             password: hashpassword,
-            age,
-            gender
         })
         await newUser.save();
         const token = await newUser.getJWT();
@@ -32,7 +30,7 @@ router.post('/signup', async (req, res)=>{
             message: 'User created successfully',
             user: {
                 _id: newUser._id,
-                firstName: newUser.firstName,
+                firstName: newUser.firstName, 
                 lastName: newUser.lastName,
                 email: newUser.email
             },
