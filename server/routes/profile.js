@@ -24,7 +24,6 @@ router.patch('/profile/update', auth, async(req, res)=>{
     try {
         const {firstName, lastName, age, gender, photoUrl, about} = req.body;
         const userId = req.user._id;
-        console.log(userId)
 
         const updatedUser = await User.findByIdAndUpdate(userId, {
             firstName,

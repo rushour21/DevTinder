@@ -12,7 +12,6 @@ router.get(
     auth,
     async (req, res)=>{
         try {
-            console.log(req.user);
             const loggedUser = req.user;
 
             const connectionRequests = await Request.find({
@@ -34,8 +33,6 @@ router.get('/user/connections',
     async (req,res)=>{
         try {
             const loggedUser = req.user;
-            console.log(loggedUser)
-
             const connections = await Request.find({
                 $or:[
                     {fromUserId:loggedUser._id, status:'accepted'},
@@ -44,7 +41,6 @@ router.get('/user/connections',
             })
             .populate('fromUserId', SAFE_DATA)
             .populate('toUserId', SAFE_DATA);
-            console.log(connections)
             
             const data = connections.map((doc)=>{
                 if (doc.fromUserId._id.toString() === loggedUser._id.toString()) {
@@ -54,7 +50,6 @@ router.get('/user/connections',
                     return doc.fromUserId;
                 }
             })
-            console.log({data})
             res.json({data})
         } catch (error) {
             res.status(400).send({
@@ -67,8 +62,6 @@ router.get('/user/connections',
 router.get('/feed', auth, async (req,res)=>{
     try {
         const loggedUser = req.user;
-        console.log(loggedUser); 
-
         const page= parseInt(req.query.page) || 1;
         let limit = parseInt(req.query.limit) || 10;
         limit = limit>50 ? 50 : limit;

@@ -6,7 +6,6 @@ import { removeFeed } from '../utils/feedSlice';
 export default function UserCard({user , isoff}) {
     if (!user) return null; // prevent error on first render
     const dispatch = useDispatch();
-    console.log(user);
     const {_id, firstName, lastName, photoUrl, age, gender, about} = user;
     
     const handleSendRequest = async (status, userId) =>{

@@ -9,6 +9,8 @@ import appStore from './utils/appStore'
 import Feed from './component/feed'
 import Connections from './component/connections'
 import Request from './component/request'
+import Chat from './component/Chat'
+
 
 function App() {
 
@@ -23,6 +25,7 @@ function App() {
               <Route path='/login' element={<Login/>} />
               <Route path='/connections' element={<Connections/>}/>
               <Route path='/requests' element={<Request/>}/>
+              <Route path='/chat/:_id' element={<Chat/>}/>
             </Route>
           </Routes>
         </BrowserRouter>

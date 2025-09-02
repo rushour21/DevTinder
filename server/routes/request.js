@@ -13,9 +13,7 @@ router.post(
         const fromUserId = req.user._id;
         const toUserId = req.params.toUserId;
         const status = req.params.status;
-        const allowedStatuses = ['ignored', 'interested']   
-        console.log("fromUserId:", fromUserId, "toUserId:", toUserId);
-    
+        const allowedStatuses = ['ignored', 'interested']       
 
         if(!fromUserId || !toUserId || !status) {
             return res.status(400).json({ message: 'Invalid request parameters.' });

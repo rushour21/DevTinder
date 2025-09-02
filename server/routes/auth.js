@@ -9,7 +9,6 @@ const auth = require('../middlewares/auth');
 router.post('/signup', async (req, res)=>{
     try {
         isvalidSignUp(req);
-        console.log(req.body);
         const {firstName, lastName, email, password } = req.body;
         const existingUser = await User.findOne({ email: email});
         if(existingUser) throw new Error("User already exists.");

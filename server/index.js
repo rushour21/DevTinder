@@ -6,8 +6,10 @@ const profileRoutes = require('./routes/profile');
 const requestRoutes = require('./routes/request');
 const userRoutes =  require('./routes/user')
 const cors = require('cors')
+const http = require("http")
 
 const dotenv = require('dotenv');
+const initializeSocket = require('./utils/socket');
 dotenv.config();
 
 const app = express();
@@ -24,9 +26,11 @@ app.use('/', requestRoutes);
 app.use('/', userRoutes);
 app.use('/', profileRoutes)
 
+const server = http.createServer(app);
+initializeSocket(server);
 
 connectDB().then(() => {
-  app.listen(port, () => {
+  server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 })}).catch((error) => {
   console.error(error);  
