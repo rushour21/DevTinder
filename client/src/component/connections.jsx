@@ -52,7 +52,7 @@ export default function Connections() {
                             </p>
                         </div>
                     </div>
-                    <Link to={`/chat/${_id}`}>
+                    <Link to={"/chat"} state={{targetedId:_id, targetedName:firstName}}>
                         <button className='cursor-pointer'><IoChatboxEllipses size={35} color='grey'/></button>
                     </Link>
                 </li>

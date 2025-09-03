@@ -1,46 +1,69 @@
 // Chat.jsx
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
-
+import { Socket } from "socket.io-client";
+import axios from "axios";
 
 export default function Chat() {
-  const { _id } = useParams();
-  console.log({ _id });
+   const location = useLocation();
+  const { targetedId, targetedName } = location.state || {}; 
   const user = useSelector((state) => state.user);
   const userId = user?._id;
-  const [messages, setMessages] = useState([
-    { from: "them", text: "Hey! How are you?" },
-    { from: "me", text: "I’m doing great, thanks!" },
-    { from: "them", text: "Let’s start working on the project." },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [newMsg, setNewMsg] = useState("");
 
   const sendMessage = () => {
     if (!newMsg.trim()) return;
-    setMessages([...messages, { from: "me", text: newMsg }]);
-    setNewMsg("");
+    const socket = createSocketConnection();
+    socket.emit("sendMessage", { 
+      firstName : user.firstName,
+      userId,
+      targetedId,
+      text: newMsg
+    })
   };
 
+  const fetchMessages = async ()=>{
+     const response = await axios.get(`${import.meta.env.VITE_API_URL}/chat/${targetedId}`, {
+      withCredentials:true
+     });
+     console.log(response.data.messages);
+
+     const chatmessages = response?.data?.messages.map((msg)=>{
+      return {from: msg.senderId.firstName, text: msg.text}
+     });
+     setMessages(chatmessages);
+  }
   useEffect(()=>{
-    if (!userId || !_id) return; // wait until user is loaded
+    fetchMessages();
+  },[])
+
+  useEffect(()=>{
+    if (!userId || !targetedId) return; // wait until user is loaded
 
     const socket = createSocketConnection();
-    socket.emit("joinChat", {userId, targetedId: _id})
+    socket.emit("joinChat", {userId, targetedId});
+
+    socket.on("receiveMessage", (data) => {
+      console.log(data);
+      setMessages((prev) => [...prev, {from: data.from, text: data.text}]);
+    });
 
     return ()=>{
       socket.disconnect();
     }
-  },[userId, _id])
+  },[userId, targetedId])
+  console.log("Messages:", messages);
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="flex flex-col w-full max-w-lg h-[90vh] bg-white border border-gray-200 rounded-lg shadow-sm">
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 text-sm font-medium text-gray-700">
-          Chat with User {_id}
+          Chat with User {targetedName}
         </div>
 
         {/* Messages */}
@@ -49,12 +72,12 @@ export default function Chat() {
             <div
               key={i}
               className={`flex ${
-                msg.from === "me" ? "justify-end" : "justify-start"
+                msg.from === user?.firstName ? "justify-end" : "justify-start"
               }`}
             >
               <div
                 className={`px-3 py-2 rounded-md max-w-[75%] leading-relaxed ${
-                  msg.from === "me"
+                  msg.from === user?.firstName
                     ? "bg-gray-800 text-white"
                     : "bg-gray-100 text-gray-800"
                 }`}
