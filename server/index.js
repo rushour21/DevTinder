@@ -17,7 +17,12 @@ const http = require("http")
 const initializeSocket = require('./utils/socket');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://dev-tinder-swart.vercel.app",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 const port = process.env.PORT || 3000;
