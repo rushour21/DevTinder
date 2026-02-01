@@ -2,18 +2,18 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addRequest, removeRequest } from '../utils/requestSlice';
-import { RxCross2 } from "react-icons/rx";
-import { FaCheck } from "react-icons/fa6";
-
-
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
+import { Check, X } from "lucide-react"
 
 export default function Request() {
-    const requests = useSelector((store)=>store.requests)
+    const requests = useSelector((store) => store.requests)
     const dispatch = useDispatch();
-    const fetchRequest = async() =>{
+
+    const fetchRequest = async () => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/request/received`,{
-                withCredentials:true
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/request/received`, {
+                withCredentials: true
             })
             dispatch(addRequest(res?.data?.data))
         } catch (error) {
@@ -21,10 +21,10 @@ export default function Request() {
         }
     }
 
-    const receiveRequest = async(status, _id)=>{
+    const receiveRequest = async (status, _id) => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/request/review/${status}/${_id}`,{}, {
-                withCredentials:true
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/request/review/${status}/${_id}`, {}, {
+                withCredentials: true
             })
             dispatch(removeRequest(_id))
         } catch (error) {
@@ -32,46 +32,60 @@ export default function Request() {
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchRequest();
-    },[]);
+    }, []);
 
-    if(!requests) return;
-    if(requests.length === 0) return <h1>No Request Found</h1>
-    console.log(requests)
+    if (!requests) return null;
 
-  return (
-    <div className='w-full h-full flex flex-col items-center gap-2 overflow-auto '>
-        <h1 className='text-3xl font-bold text-neutral-500 mb-2'>Requests</h1>
-        <ul className="list  rounded-box shadow-md w-3xl ">
-            {requests.map((request)=>{
-            const {fromUserId} = request
-            return(
-                <li className="list-row flex items-center bg-base-100 mt-2">
-                <div>
-                    <img className="size-10 rounded-box" 
-                    src={fromUserId.photoUrl? fromUserId.photoUrl: "https://img.daisyui.com/images/profile/demo/1@94.webp"}
-                    />
+    return (
+        <div className='container mx-auto p-4 max-w-2xl py-8'>
+            <h1 className='text-3xl font-bold mb-6 text-center text-foreground'>Pending Requests</h1>
+
+            {requests.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground border border-dashed rounded-lg">
+                    No pending requests
                 </div>
-                <div>
-                    <h1 className='text-xl text-gray-700 font-bold'>{fromUserId.firstName + " " + fromUserId.lastName}</h1>
-                    <div className="text-xs uppercase font-semibold opacity-60">{fromUserId.age + " " + fromUserId.gender}</div>
-                    <p className="list-col-wrap text-xs">
-                        {fromUserId.about}
-                    </p>
+            ) : (
+                <div className="space-y-4">
+                    {requests.map((request) => {
+                        const { fromUserId } = request
+                        return (
+                            <Card key={request._id} className="flex flex-col sm:flex-row items-center p-4 gap-4 overflow-hidden">
+                                <div className="h-16 w-16 min-w-[4rem] rounded-full overflow-hidden border border-border">
+                                    <img
+                                        src={fromUserId.photoUrl || "https://geographyandyou.com/images/user-profile.png"}
+                                        alt={fromUserId.firstName}
+                                        className="h-full w-full object-cover"
+                                    />
+                                </div>
+
+                                <div className="flex-1 text-center sm:text-left space-y-1">
+                                    <h3 className="text-lg font-bold">{fromUserId.firstName} {fromUserId.lastName}</h3>
+                                    <p className="text-xs uppercase tracking-wide font-medium text-muted-foreground">{fromUserId.age} • {fromUserId.gender}</p>
+                                    <p className="text-sm text-foreground/80 line-clamp-2">{fromUserId.about}</p>
+                                </div>
+
+                                <div className="flex gap-2 w-full sm:w-auto">
+                                    <Button
+                                        onClick={() => receiveRequest("rejected", request._id)}
+                                        variant="outline"
+                                        className="flex-1 sm:flex-none border-destructive/50 text-destructive hover:bg-destructive/10"
+                                    >
+                                        <X className="h-4 w-4 mr-1" /> Reject
+                                    </Button>
+                                    <Button
+                                        onClick={() => receiveRequest("accepted", request._id)}
+                                        className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white"
+                                    >
+                                        <Check className="h-4 w-4 mr-1" /> Accept
+                                    </Button>
+                                </div>
+                            </Card>
+                        )
+                    })}
                 </div>
-                <div className='mr-2 ml-auto flex gap-2'>
-                    <button onClick={()=>receiveRequest("accepted", request._id)} className="btn text-2xl border-neutral-600 rounded-full btn-ghost">
-                        <FaCheck/>
-                    </button>
-                <button onClick={()=>receiveRequest("rejected", request._id)} className="btn text-2xl border-neutral-600 rounded-full btn-ghost">
-                    <RxCross2/>
-                </button>
-                </div>
-            </li>
-            )
-        })}
-        </ul>
-    </div>
-  )
+            )}
+        </div>
+    )
 }

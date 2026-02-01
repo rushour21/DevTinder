@@ -2,65 +2,74 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addConnections } from '../utils/connectionsSlice';
-import { IoChatboxEllipses } from "react-icons/io5";
+import { MessageCircle } from "lucide-react";
 import { Link } from 'react-router-dom';
-
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default function Connections() {
-    const connections = useSelector((store)=>store.connections)
+    const connections = useSelector((store) => store.connections)
     const dispatch = useDispatch();
-    console.log(connections);
 
-    const fetchconnections= async ()=>{
+    const fetchconnections = async () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/connections`, {
-                withCredentials:true
+                withCredentials: true
             });
-            
             dispatch((addConnections(res?.data?.data)))
         } catch (error) {
             console.log(error)
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchconnections();
-    },[])
+    }, [])
 
-    if(!connections) return;
-    if(connections.length === 0) return <h1>No connections Found</h1>
+    if (!connections) return null;
 
-  return (
-    <div className='w-full h-full flex flex-col items-center gap-2 overflow-auto '>
-        <h1 className='text-3xl font-bold text-neutral-500 mb-2'>Connections</h1>
-        <ul className="list rounded-box shadow-md w-3xl">
-            {connections.map((connection)=>{
-            const {_id, firstName, lastName, photoUrl, age, gender, about} = connection
-            return(
-                <li key={_id} className="list-row bg-base-100 mt-2 flex justify-between">
-                    <div className='flex items-center gap-3'>
-                        <div>
-                            <img className="size-10 rounded-box" 
-                            src={photoUrl? photoUrl: "https://img.daisyui.com/images/profile/demo/1@94.webp"}
-                            />
-                        </div>
-                        <div>
-                            <h1 className='text-xl text-gray-700 font-bold'>{firstName + " " + lastName}</h1>
-                            <div className="text-xs uppercase font-semibold opacity-60">{age + " " + gender}</div>
-                            <p className="list-col-wrap text-xs">
-                            {about}
-                            </p>
-                        </div>
-                    </div>
-                    <Link to={"/chat"} state={{targetedId:_id, targetedName:firstName}}>
-                        <button className='cursor-pointer'><IoChatboxEllipses size={35} color='grey'/></button>
-                    </Link>
-                </li>
-            )
-        })}
-        </ul>
-    </div>
-  )
+    return (
+        <div className='container mx-auto p-4 max-w-4xl py-8'>
+            <h1 className='text-3xl font-bold mb-8 text-center text-foreground'>My Connections</h1>
+
+            {connections.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground border border-dashed rounded-lg bg-secondary/5">
+                    No connections yet. start swiping!
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {connections.map((connection) => {
+                        const { _id, firstName, lastName, photoUrl, age, gender, about } = connection
+                        return (
+                            <Card key={_id} className="overflow-hidden hover:shadow-md transition-all group">
+                                <div className="h-24 bg-gradient-to-r from-primary/20 to-secondary/20"></div>
+                                <div className="px-6 -mt-12 mb-4 flex justify-between items-end">
+                                    <div className="h-24 w-24 rounded-full border-4 border-background bg-white overflow-hidden shadow-sm">
+                                        <img
+                                            src={photoUrl || "https://geographyandyou.com/images/user-profile.png"}
+                                            alt={firstName}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
+                                    <Link to={"/chat"} state={{ targetedId: _id, targetedName: firstName, targetedPhoto: photoUrl }}>
+                                        <Button size="sm" className="rounded-full gap-2 shadow-sm mb-2">
+                                            <MessageCircle className="h-4 w-4" /> Chat
+                                        </Button>
+                                    </Link>
+                                </div>
+
+                                <div className="px-6 pb-6 space-y-2">
+                                    <div>
+                                        <h3 className="font-bold text-lg">{firstName} {lastName}</h3>
+                                        <p className="text-xs uppercase font-semibold text-muted-foreground">{age} • {gender}</p>
+                                    </div>
+                                    <p className="text-sm text-foreground/80 line-clamp-2 min-h-[2.5em]">{about || "No bio available."}</p>
+                                </div>
+                            </Card>
+                        )
+                    })}
+                </div>
+            )}
+        </div>
+    )
 }
-
-            

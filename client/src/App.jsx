@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Body from './body'
 import Profile from './component/profle'
 import Login from './component/login'
@@ -10,6 +10,7 @@ import Feed from './component/feed'
 import Connections from './component/connections'
 import Request from './component/request'
 import Chat from './component/Chat'
+import LandingPage from './pages/LandingPage'
 
 
 function App() {
@@ -19,13 +20,14 @@ function App() {
       <Provider store={appStore}>
         <BrowserRouter>
           <Routes>
-            <Route path='/' element={<Body/>}>
-              <Route path='/' element={<Feed/>} />
-              <Route path='/profile' element={<Profile/>} />
-              <Route path='/login' element={<Login/>} />
-              <Route path='/connections' element={<Connections/>}/>
-              <Route path='/requests' element={<Request/>}/>
-              <Route path='/chat' element={<Chat/>}/>
+            <Route path="/" element={<LandingPage />} />
+            <Route element={<Body />}>
+              <Route path='/feed' element={<Feed />} />
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/connections' element={<Connections />} />
+              <Route path='/requests' element={<Request />} />
+              <Route path='/chat' element={<Chat />} />
             </Route>
           </Routes>
         </BrowserRouter>

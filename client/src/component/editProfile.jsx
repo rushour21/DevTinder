@@ -1,141 +1,121 @@
 import React, { useState } from 'react'
 import UserCard from './userCard'
 import axios from 'axios'
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input" // Assuming Input component logic reuse or direct styles
+import { cn } from "@/lib/utils"
 
 export default function EditProfile({ user }) {
-  const [firstName, setFirstName] = useState(user.firstName)
-  const [lastName, setLastName] = useState(user.lastName)
-  const [photoUrl, setPhotoUrl] = useState(user.photoUrl)
-  const [age, setAge] = useState(user.age)
-  const [gender, setGender] = useState(user.gender)
-  const [about, setAbout] = useState(user.about)
-  const [toast, setToast] = useState(null) // success or error message
+  const [formData, setFormData] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    photoUrl: user.photoUrl,
+    age: user.age,
+    gender: user.gender,
+    about: user.about,
+    skills: user.skills ? user.skills.join(", ") : ""
+  })
+  const [toast, setToast] = useState(null)
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
 
   const handleSubmit = async () => {
     try {
+      // Parse skills string back to array if needed by backend, assuming backend handles array. 
+      // Current userSchema says [String].
+      const skillsArray = formData.skills.split(",").map(s => s.trim()).filter(Boolean)
+
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/profile/update`,
-        {
-          firstName,
-          lastName,
-          age,
-          gender,
-          photoUrl,
-          about,
-        },
-        {
-          withCredentials: true,
-        }
+        { ...formData, skills: skillsArray },
+        { withCredentials: true }
       )
 
       if (res.status === 200) {
         setToast({ type: 'success', message: 'Profile updated successfully' })
       }
     } catch (error) {
-      setToast({ type: 'error', message: 'Failed to update profile ' })
+      setToast({ type: 'error', message: 'Failed to update profile' })
       console.log(error)
     } finally {
-      // Auto-hide toast after 3s
-      setTimeout(() => setToast(null), 2000)
+      setTimeout(() => setToast(null), 3000)
     }
   }
 
   return (
-    <div className="flex gap-6 mr-auto ml-auto">
-      {/* ✅ Conditional Toast */}
+    <div className="flex flex-col lg:flex-row gap-8 w-full max-w-5xl items-start">
+      {/* Toast Notification */}
       {toast && (
-        <div className="toast toast-top toast-center z-10">
-          <div
-            className={`alert ${
-              toast.type === 'success' ? 'alert-success' : 'alert-error'
-            }`}
-          >
-            <span>{toast.message}</span>
-          </div>
+        <div className={cn(
+          "fixed top-20 right-4 z-50 px-4 py-3 rounded-md shadow-lg text-sm font-medium animate-in slide-in-from-right",
+          toast.type === 'success' ? "bg-green-100 text-green-800 border border-green-200" : "bg-destructive/10 text-destructive border border-destructive/20"
+        )}>
+          {toast.message}
         </div>
       )}
 
-      <div className="card bg-base-100 w-96 shadow-lg">
-        <div className="card-body">
-          <h2 className="card-title">Edit Profile</h2>
-          <div className="flex flex-col gap-2">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">First Name</legend>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="input"
-                placeholder="Type here"
-              />
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Last Name</legend>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="input"
-                placeholder="Type here"
-              />
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Photo URL</legend>
-              <input
-                type="text"
-                value={photoUrl}
-                onChange={(e) => setPhotoUrl(e.target.value)}
-                className="input"
-                placeholder="Type here"
-              />
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Age</legend>
-              <input
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                className="input"
-                placeholder="Type here"
-              />
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Gender</legend>
-              <input
-                type="text"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="input"
-                placeholder="Type here"
-              />
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">About</legend>
-              <input
-                type="text"
-                value={about}
-                onChange={(e) => setAbout(e.target.value)}
-                className="input"
-                placeholder="Type here"
-              />
-            </fieldset>
+      {/* Edit Form */}
+      <Card className="flex-1 shadow-md w-full">
+        <CardHeader>
+          <CardTitle>Edit Profile</CardTitle>
+          <CardDescription>Update your personal information and skills.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">First Name</label>
+              <Input name="firstName" value={formData.firstName} onChange={handleChange} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Last Name</label>
+              <Input name="lastName" value={formData.lastName} onChange={handleChange} />
+            </div>
           </div>
-          <div className="card-actions justify-center mt-2">
-            <button
-              className="btn btn-primary bg-neutral-700"
-              onClick={handleSubmit}
-            >
-              Update
-            </button>
-          </div>
-        </div>
-      </div>
 
-      <UserCard
-        user={{ firstName, lastName, photoUrl, age, gender, about }}
-        handleSubmit
-        //isoff={true}
-      />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Photo URL</label>
+            <Input name="photoUrl" value={formData.photoUrl} onChange={handleChange} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Age</label>
+              <Input name="age" type="number" value={formData.age} onChange={handleChange} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Gender</label>
+              <select name="gender" value={formData.gender} onChange={handleChange} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Skills (Comma separated)</label>
+            <Input name="skills" value={formData.skills} onChange={handleChange} placeholder="React, Node.js, ..." />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">About</label>
+            <textarea name="about" value={formData.about} onChange={handleChange} rows={4} className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+          </div>
+
+        </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button onClick={handleSubmit}>Save Changes</Button>
+        </CardFooter>
+      </Card>
+
+      {/* Live Preview */}
+      <div className='flex flex-col gap-4 items-center'>
+        <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Preview</span>
+        <UserCard user={{ ...formData, skills: formData.skills.split(",").map(s => s.trim()).filter(Boolean) }} />
+      </div>
     </div>
   )
 }

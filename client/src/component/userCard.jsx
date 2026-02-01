@@ -1,41 +1,28 @@
-import axios from 'axios';
 import React from 'react'
-import { useDispatch } from 'react-redux';
-import { removeFeed } from '../utils/feedSlice';
+import { Card, CardContent } from "../components/ui/card"
+import { Badge } from "lucide-react"
 
-export default function UserCard({user , isoff}) {
-    if (!user) return null; // prevent error on first render
-    const dispatch = useDispatch();
-    const {_id, firstName, lastName, photoUrl, age, gender, about} = user;
-    
-    const handleSendRequest = async (status, userId) =>{
-        try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/request/send/${status}/${userId}`,
-                {},
-                {withCredentials:true}
-            );
-            dispatch(removeFeed(userId));
-        } catch (error) {
-            console.log(error);
-        }
-    }
+// Fallback visual non-swipe component for profile preview or matches
+export default function UserCard({ user }) {
+    if (!user) return null;
+    const { firstName, lastName, photoUrl, age, gender, about } = user;
+
     return (
-    <div className="card bg-base-100 w-96 shadow-sm relative">
-        <figure className='h-ful'>
-            <img
-            src={photoUrl}
-            alt="uuig"
-            className="w-full h-full" />
-        </figure>
-        <div className="card-body absolute bottom-0 text-neutral-50 w-full">
-            <h2 className="card-title">{firstName + " " + lastName}</h2>
-            <p>{age && gender &&`${age} ${gender.charAt(0).toUpperCase() + gender.slice(1)}`}</p>
-            <p className=' whitespace-normal break-words w-full'>{about? about :''}</p>
-            <div className="card-actions justify-end w-full">
-                <button /*disabled={isoff}*/ onClick={()=>handleSendRequest('ignored', _id)} className="btn btn-primary">Ignore</button>
-                <button /*disabled={isoff}*/ onClick={()=>handleSendRequest('interested', _id)} className="btn btn-primary">Interested</button>
+        <Card className="w-96 shadow-lg overflow-hidden border-border/50">
+            <div className='h-64 overflow-hidden relative'>
+                <img
+                    src={photoUrl}
+                    alt="User"
+                    className="w-full h-full object-cover transition-transform hover:scale-105 duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                    <h2 className="text-2xl font-bold">{firstName} {lastName}, {age}</h2>
+                    <p className="text-sm opacity-90 capitalize">{gender}</p>
+                </div>
             </div>
-        </div>
-    </div>
-  )
+            <CardContent className="p-6">
+                <p className="text-muted-foreground">{about || "No bio available."}</p>
+            </CardContent>
+        </Card>
+    )
 }

@@ -1,57 +1,113 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import icon from '../assets/icon.jpg'
-import {Link, useNavigate} from 'react-router-dom';
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { removeUser } from '../utils/userSlice';
-import axios from 'axios';
-
-
+import { Code, LogOut, User as UserIcon, Users, MessageSquare, UserPlus } from "lucide-react"
+import { Button } from "../components/ui/button"
+import { cn } from "../lib/utils"
 
 export default function Navbar() {
-    const user = useSelector((store)=> store.user);
-    const dispatch =  useDispatch();
+    const user = useSelector((store) => store.user);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
 
-    const handleLogout = async ()=>{
-        try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/logout`,{}, {withCredentials:true})
-            dispatch(removeUser());
-            return navigate('/login');
-        } catch (error) {
-            console.log(error)
-        }
+    const handleLogout = () => {
+        dispatch(removeUser());
+        navigate("/login");
     }
-    
-  return (
-    <div className="navbar bg-base-100 shadow-sm">
-        <div className="flex-1">
-            <Link to='/' className="btn btn-ghost text-xl text-[#cf742a] ">〽️DevTinder</Link>
-        </div>
-        <div className="flex items-center gap-6">
-            {user && <p>welcome {user?.firstName} {user?.lastName}</p>}
-            <div className="dropdown dropdown-end">
-                <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-                    <div className="w-10 rounded-full">
-                        <img
-                            alt="Tailwind CSS Navbar component"
-                            src={user ? user.photoUrl : icon }/>
+
+    return (
+        <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container px-4 h-16 flex items-center justify-between">
+                <Link to={user ? "/feed" : "/"} className="flex items-center gap-2">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                        <Code className="h-5 w-5 text-primary" />
                     </div>
+                    <span className="font-bold text-lg tracking-tight hidden sm:inline-block">Nexer</span>
+                </Link>
+
+                <div className="flex items-center gap-4">
+                    {user ? (
+                        <>
+                            <span className="text-sm font-medium text-muted-foreground hidden md:inline-block">
+                                Welcome, {user.firstName}
+                            </span>
+                            <div className="relative">
+                                <button
+                                    onClick={() => setOpen(!open)}
+                                    className="flex items-center gap-2 focus:outline-none"
+                                >
+                                    <div className="h-9 w-9 rounded-full overflow-hidden border border-border cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                                        <img src={user.photoUrl} alt="User" className="h-full w-full object-cover" />
+                                    </div>
+                                </button>
+
+                                {open && (
+                                    <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border/50 bg-background/95 backdrop-blur-sm shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                        <div className="p-2 space-y-1">
+                                            <Link
+                                                to="/profile"
+                                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground rounded-lg hover:bg-secondary/50 transition-colors"
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                <UserIcon className="h-4 w-4 text-primary" /> Profile
+                                            </Link>
+                                            <Link
+                                                to="/connections"
+                                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground rounded-lg hover:bg-secondary/50 transition-colors"
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                <Users className="h-4 w-4 text-primary" /> Connections
+                                            </Link>
+                                            <Link
+                                                to="/requests"
+                                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground rounded-lg hover:bg-secondary/50 transition-colors"
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                <UserPlus className="h-4 w-4 text-primary" /> Requests
+                                            </Link>
+                                            <Link
+                                                to="/chat"
+                                                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground rounded-lg hover:bg-secondary/50 transition-colors"
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                <MessageSquare className="h-4 w-4 text-primary" /> Chat
+                                            </Link>
+                                        </div>
+                                        <div className="h-px bg-border/50 my-0"></div>
+                                        <div className="p-2">
+                                            <button
+                                                onClick={() => {
+                                                    setOpen(false);
+                                                    handleLogout();
+                                                }}
+                                                className="flex w-full items-center gap-2 px-3 py-2 text-sm font-medium text-destructive rounded-lg hover:bg-destructive/10 transition-colors"
+                                            >
+                                                <LogOut className="h-4 w-4" /> Logout
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Overlay to close dropdown when clicking outside */}
+                                {open && (
+                                    <div
+                                        className="fixed inset-0 z-40 bg-transparent"
+                                        onClick={() => setOpen(false)}
+                                    ></div>
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" state={{ isLogin: false }}>
+                                <Button>Join Now</Button>
+                            </Link>
+                        </>
+                    )}
                 </div>
-                {user && <ul
-                    tabIndex={0}
-                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                    <li>
-                    <Link to='/profile' className="justify-between">
-                        Profile
-                        <span className="badge">New</span>
-                    </Link>
-                    </li>
-                    <li><Link to='connections'>Connections</Link></li>
-                    <li><Link to='requests'>Requests</Link></li>
-                    <li><a onClick={handleLogout}>Logout</a></li>
-                </ul>}
             </div>
-        </div>
-    </div>
-  )
+        </nav>
+    )
 }
