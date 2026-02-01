@@ -2,7 +2,7 @@ import { motion, useMotionValue, useTransform, useAnimation } from "framer-motio
 import { useDispatch } from "react-redux"
 import { removeFeed } from "../../utils/feedSlice"
 import axios from "axios"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Code, Database, Globe } from "lucide-react"
 
@@ -35,6 +35,14 @@ export default function SwipeableUserCard({ user, isTop }) {
         }
     }
 
+    useEffect(() => {
+        const handleResize = () => {
+            x.set(0)
+        }
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [x])
+
     if (!user) return null
 
     // Fallback skills if none provided
@@ -42,9 +50,10 @@ export default function SwipeableUserCard({ user, isTop }) {
 
     return (
         <motion.div
-            className="absolute top-0 w-full max-w-sm cursor-grab active:cursor-grabbing perspective-1000"
+            className="absolute top-5 w-full max-w-sm cursor-grab active:cursor-grabbing perspective-1000 touch-none"
             style={{ x, rotate, opacity, zIndex: isTop ? 10 : 1 }}
-            drag={isTop ? "x" : false}
+            drag="x"
+            dragListener={isTop}
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={handleDragEnd}
             animate={controls}

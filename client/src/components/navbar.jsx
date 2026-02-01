@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { removeUser } from '../utils/userSlice';
-import { LogOut, User as UserIcon, Users, MessageSquare, UserPlus } from "lucide-react"
+import { LogOut, User as UserIcon, Users, MessageSquare, UserPlus, Menu } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { cn } from "../lib/utils"
 import NexerLogo from "../assets/NEXER LOGO.png"
@@ -34,11 +34,9 @@ export default function Navbar() {
                             <div className="relative">
                                 <button
                                     onClick={() => setOpen(!open)}
-                                    className="flex items-center gap-2 focus:outline-none"
+                                    className="p-2 rounded-md hover:bg-secondary/50 transition-colors focus:outline-none"
                                 >
-                                    <div className="h-9 w-9 rounded-full overflow-hidden border border-border cursor-pointer transition-transform hover:scale-105 active:scale-95">
-                                        <img src={user.photoUrl} alt="User" className="h-full w-full object-cover" />
-                                    </div>
+                                    <Menu className="h-6 w-6 text-foreground" />
                                 </button>
 
                                 {open && (
