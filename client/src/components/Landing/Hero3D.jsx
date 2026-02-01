@@ -11,13 +11,9 @@ export default function Hero3D() {
     const rotateY = useTransform(x, [-100, 100], [-30, 30])
 
     return (
-        <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <section className="relative pt-25 pb-20 lg:pt-28 lg:pb-28 overflow-hidden">
             {/* Background Image & Grid */}
-            <div className="absolute inset-0 -z-10 h-full w-full overflow-hidden">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop')] bg-cover bg-center opacity-5"></div>
-                <div className="absolute inset-0 bg-background/90 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-                <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
-            </div>
+
 
             <div className="container mx-auto px-4">
                 <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -50,9 +46,9 @@ export default function Hero3D() {
 
                         <div className="pt-8 flex items-center justify-center lg:justify-start gap-8 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
                             {/* Tech Logos Placeholder */}
-                            <div className="flex items-center gap-2"><div className="h-6 w-6 rounded bg-foreground/20"></div> <span className="font-semibold text-sm">React</span></div>
-                            <div className="flex items-center gap-2"><div className="h-6 w-6 rounded bg-foreground/20"></div> <span className="font-semibold text-sm">Node</span></div>
-                            <div className="flex items-center gap-2"><div className="h-6 w-6 rounded bg-foreground/20"></div> <span className="font-semibold text-sm">Rust</span></div>
+                            <div className="flex items-center gap-2"><Code className="h-3 w-3" /><span className="font-semibold text-sm">React</span></div>
+                            <div className="flex items-center gap-2"><Code className="h-3 w-3" /><span className="font-semibold text-sm">Node</span></div>
+                            <div className="flex items-center gap-2"><Code className="h-3 w-3" /><span className="font-semibold text-sm">Rust</span></div>
                         </div>
                     </div>
 

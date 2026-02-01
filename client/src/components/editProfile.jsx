@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import UserCard from './userCard'
 import axios from 'axios'
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input" // Assuming Input component logic reuse or direct styles
 import { cn } from "@/lib/utils"
+import { useNavigate } from "react-router-dom"
 
 export default function EditProfile({ user }) {
   const [formData, setFormData] = useState({
@@ -17,7 +18,16 @@ export default function EditProfile({ user }) {
     skills: user.skills ? user.skills.join(", ") : ""
   })
   const [toast, setToast] = useState(null)
+  const timeoutRef = useRef(null);
+  const navigate = useNavigate()
 
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
@@ -36,6 +46,9 @@ export default function EditProfile({ user }) {
 
       if (res.status === 200) {
         setToast({ type: 'success', message: 'Profile updated successfully' })
+        timeoutRef.current = setTimeout(() => {
+          navigate('/feed')
+        }, 2000)
       }
     } catch (error) {
       setToast({ type: 'error', message: 'Failed to update profile' })

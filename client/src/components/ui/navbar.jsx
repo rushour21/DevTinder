@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Link, useNavigate } from "react-router-dom"
 
+import NexerLogo from "../../assets/NEXER LOGO.png"
+
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false)
     const navigate = useNavigate()
@@ -23,11 +25,8 @@ export default function Navbar() {
         )}>
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 {/* Logo */}
-                <Link to="/" className="flex items-center gap-2 cursor-pointer"> {/* Changed div to Link and onClick to to */}
-                    <div className="bg-primary/10 p-2 rounded-lg">
-                        <Code className="h-6 w-6 text-primary" /> {/* Changed Code2 to Code and size */}
-                    </div>
-                    <span className="text-2xl font-bold tracking-tight text-foreground">Nexer</span> {/* Changed text and classes */}
+                <Link to="/" className="flex items-center gap-2 cursor-pointer">
+                    <img src={NexerLogo} alt="Nexer" className="h-[100px] w-auto object-contain md:h-28" />
                 </Link>
 
                 {/* Links */}

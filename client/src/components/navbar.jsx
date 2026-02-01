@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { removeUser } from '../utils/userSlice';
-import { Code, LogOut, User as UserIcon, Users, MessageSquare, UserPlus } from "lucide-react"
+import { LogOut, User as UserIcon, Users, MessageSquare, UserPlus } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { cn } from "../lib/utils"
+import NexerLogo from "../assets/NEXER LOGO.png"
 
 export default function Navbar() {
     const user = useSelector((store) => store.user);
@@ -21,10 +22,7 @@ export default function Navbar() {
         <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container px-4 h-16 flex items-center justify-between">
                 <Link to={user ? "/feed" : "/"} className="flex items-center gap-2">
-                    <div className="bg-primary/10 p-2 rounded-lg">
-                        <Code className="h-5 w-5 text-primary" />
-                    </div>
-                    <span className="font-bold text-lg tracking-tight hidden sm:inline-block">Nexer</span>
+                    <img src={NexerLogo} alt="Nexer" className="h-[100px] w-auto object-contain md:h-28" />
                 </Link>
 
                 <div className="flex items-center gap-4">
