@@ -40,7 +40,7 @@ export default function Feed() {
 
     return (
         <div className='flex flex-1 justify-center items-center h-[calc(100vh-64px)] overflow-hidden relative w-full bg-secondary/10'>
-            <div className="relative w-full max-w-sm h-[600px]">
+            <div className="relative w-full max-w-sm h-[680px]">
                 {feed.map((user, index) => (
                     <SwipeableUserCard
                         key={user._id}

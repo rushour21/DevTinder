@@ -64,37 +64,39 @@ export default function SwipeableUserCard({ user, isTop }) {
                 </div>
 
                 {/* Content */}
-                <div className="pt-16 px-6 pb-8 space-y-6 text-center">
-                    <div className="space-y-1">
-                        <h2 className="font-bold text-2xl text-foreground">{user.firstName} {user.lastName}</h2>
-                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{user.age} • {user.gender}</p>
+                <div className="pt-20 px-8 pb-10 space-y-8 text-center h-[500px] flex flex-col justify-between">
+                    <div>
+                        <div className="space-y-2">
+                            <h2 className="font-bold text-3xl text-foreground">{user.firstName} {user.lastName}</h2>
+                            <p className="text-base font-medium text-muted-foreground uppercase tracking-wide">{user.age} • {user.gender}</p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 justify-center mt-6">
+                            {displaySkills.slice(0, 5).map((skill, i) => (
+                                <span key={i} className="text-xs font-semibold border border-transparent bg-secondary/50 text-secondary-foreground px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-secondary/70 transition-colors">
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+
+                        <div className="text-base text-muted-foreground leading-relaxed px-2 mt-6 line-clamp-4">
+                            "{user.about || "Looking to connect with like-minded developers."}"
+                        </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 justify-center">
-                        {displaySkills.slice(0, 5).map((skill, i) => (
-                            <span key={i} className="text-xs font-medium border border-border bg-secondary/30 px-3 py-1 rounded-full text-foreground/80 flex items-center gap-1">
-                                {skill}
-                            </span>
-                        ))}
-                    </div>
-
-                    <div className="text-sm text-muted-foreground leading-relaxed px-4">
-                        "{user.about || "Looking to connect with like-minded developers."}"
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 pt-4">
+                    <div className="grid grid-cols-2 gap-6 pt-2">
                         <Button
-                            onClick={() => handleSwipe("interested")}
-                            className="w-full bg-foreground text-background hover:bg-foreground/90 h-11"
+                            variant="destructive"
+                            onClick={() => handleSwipe("ignored")}
+                            className="w-full h-12 rounded-xl text-base font-semibold shadow-sm hover:shadow-md transition-all"
                         >
-                            Connect
+                            Ignore
                         </Button>
                         <Button
-                            variant="outline"
-                            onClick={() => console.log('View Profile Clicked')} // Placeholder for view profile
-                            className="w-full h-11"
+                            onClick={() => handleSwipe("interested")}
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
                         >
-                            View Profile
+                            Interested
                         </Button>
                     </div>
                 </div>

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Send, User, Search, MoreVertical, Plus, Users, Shield } from "lucide-react"
+import { Send, User, Search, MoreVertical, Plus, Users, Shield, ArrowLeft } from "lucide-react"
 import { ChatDetails } from "./ChatDetails";
 
 export default function Chat() {
@@ -209,11 +209,11 @@ export default function Chat() {
   const isAdmin = selectedChat?.admin === userId || selectedChat?.admin?._id === userId;
 
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-64px)] bg-secondary/10 p-4">
-      <Card className="flex w-full max-w-6xl h-[85vh] shadow-xl overflow-hidden border-border/60 bg-background">
+    <div className="flex justify-center items-center h-[calc(100vh-64px)] bg-secondary/10 p-0 md:p-4">
+      <Card className="flex w-full max-w-6xl h-full md:h-[85vh] shadow-xl overflow-hidden border-border/60 bg-background rounded-none md:rounded-xl border-x-0 md:border">
 
         {/* Sidebar */}
-        <div className="w-1/3 border-r h-full flex flex-col bg-muted/10">
+        <div className={`w-full md:w-1/3 border-r h-full flex flex-col bg-muted/10 ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
           <div className="p-4 border-b flex justify-between items-center bg-background/50 backdrop-blur sticky top-0 z-10">
             <h2 className="font-bold text-xl">Chats</h2>
             <div className="flex gap-2">
@@ -321,12 +321,15 @@ export default function Chat() {
 
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col h-full bg-background/30 relative">
+        <div className={`flex-1 flex flex-col h-full bg-background/30 relative ${!selectedChat ? 'hidden md:flex' : 'flex'}`}>
           {selectedChat ? (
             <>
               {/* Header */}
-              <div className="px-6 py-4 border-b bg-background/80 backdrop-blur flex justify-between items-center sticky top-0 z-10 cursor-pointer hover:bg-secondary/20 transition-colors" onClick={() => setIsDetailsOpen(true)}>
-                <div className="flex items-center gap-4">
+              <div className="px-4 md:px-6 py-4 border-b bg-background/80 backdrop-blur flex justify-between items-center sticky top-0 z-10 cursor-pointer hover:bg-secondary/20 transition-colors" onClick={() => setIsDetailsOpen(true)}>
+                <div className="flex items-center gap-3 md:gap-4">
+                  <Button variant="ghost" size="icon" className="md:hidden -ml-2" onClick={(e) => { e.stopPropagation(); setSelectedChat(null); }}>
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
                   <div className="h-10 w-10 rounded-full bg-secondary overflow-hidden border flex items-center justify-center">
                     {selectedChat.type === 'group' ? (
                       <Users className="h-5 w-5 text-primary" />
