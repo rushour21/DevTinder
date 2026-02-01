@@ -19,7 +19,7 @@ const initializeSocket = require('./utils/socket');
 const app = express();
 app.use(
   cors({
-    origin: "https://dev-tinder-swart.vercel.app",
+    origin: ["http://localhost:5173", "https://dev-tinder-swart.vercel.app"],
     credentials: true,
   })
 );

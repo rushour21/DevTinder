@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const {isvalidSignUp} = require("../utils/validation")
+const { isvalidSignUp } = require("../utils/validation")
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const Jwt = require('jsonwebtoken');
 const auth = require('../middlewares/auth');
 
-router.post('/signup', async (req, res)=>{
+router.post('/signup', async (req, res) => {
     try {
         isvalidSignUp(req);
-        const {firstName, lastName, email, password } = req.body;
-        const existingUser = await User.findOne({ email: email});
-        if(existingUser) throw new Error("User already exists.");
+        const { firstName, lastName, email, password } = req.body;
+        const existingUser = await User.findOne({ email: email });
+        if (existingUser) throw new Error("User already exists.");
 
         const hashpassword = await bcrypt.hash(password, 10);
         const newUser = new User({
@@ -24,12 +24,15 @@ router.post('/signup', async (req, res)=>{
         const token = await newUser.getJWT();
         res.cookie('token', token, {
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true,
         })
         res.status(201).json({
             message: 'User created successfully',
             user: {
                 _id: newUser._id,
-                firstName: newUser.firstName, 
+                firstName: newUser.firstName,
                 lastName: newUser.lastName,
                 email: newUser.email
             },
@@ -41,27 +44,30 @@ router.post('/signup', async (req, res)=>{
     }
 })
 
-router.post("/login", async (req, res)=>{
-    const {email, password} = req.body;
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const user = await User.findOne({ email: email});
-        if(!user){
-             res.status(400).json({
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            res.status(400).json({
                 message: "Invalid credentials.",
             })
         }
 
-        const isMatch =  await bcrypt.compare(password, user.password);
-        if(isMatch) {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
             const token = await user.getJWT();
-            res.cookie('token', token,{
+            res.cookie('token', token, {
                 expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
             })
             res.status(200).json({
                 message: 'Login successful',
                 user
             })
-        }else{
+        } else {
             res.status(400).json({
                 message: "Invalid credentials.",
             })
@@ -73,9 +79,12 @@ router.post("/login", async (req, res)=>{
     }
 })
 
-router.post('/logout', async (req, res)=>{
+router.post('/logout', async (req, res) => {
     res.cookie('token', null, {
         expires: new Date(Date.now()),
+        httpOnly: true,
+        sameSite: 'None',
+        secure: true,
     })
     res.status(200).json({
         message: "Logout successful"
